@@ -17,6 +17,15 @@ public class Player : MonoBehaviour
 
     void CheckInput()
     {
+        //if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
+        //{
+        //    transform.position -= (transform.forward * rotateSpeed * Time.deltaTime);
+        //}
+        //else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
+        //{
+        //    transform.position += (transform.forward * rotateSpeed * Time.deltaTime);
+        //}
+
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
             transform.Rotate(Vector3.right * rotateSpeed * Time.deltaTime);
