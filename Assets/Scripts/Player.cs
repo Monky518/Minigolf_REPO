@@ -4,22 +4,35 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    public int speed;
+    public float speed;
     public bool canMove = false;
     public InputActionReference rotateRef;
     public InputActionReference heightRef;
+
+    private float rotate;
+    private float height;
 
     void Start()
     {
         
     }
 
-    void FixedUpdate() // update is based on frame rate, fixed update is aligned with physics engine
+    private void Update() // based on frame rate
     {
+        rotate = rotateRef.action.ReadValue<float>();
+        height = heightRef.action.ReadValue<float>();
+        Debug.Log("Rotate: " +  rotate);
+        Debug.Log("Height: " +  height);
+    }
+
+    void FixedUpdate() // aligned with physics engine
+    {
+        Debug.Log("Fixed Update Works");
         if (canMove)
         {
-            transform.Rotate(Vector3.up * speed * Time.deltaTime * rotateRef.action.ReadValue<int>());
-            transform.Find("Club").Rotate(Vector3.forward * speed * Time.deltaTime * heightRef.action.ReadValue<int>());
+            Debug.Log("Player Can Move");
+            transform.Rotate(Vector3.up * speed * Time.deltaTime * rotate);
+            transform.Find("Club").Rotate(Vector3.forward * speed * Time.deltaTime * height);
         }
     }
 }

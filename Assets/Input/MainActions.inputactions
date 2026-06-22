@@ -10,7 +10,7 @@
                     "name": "ClubRotation",
                     "type": "PassThrough",
                     "id": "dbcb4263-16f3-44d4-8f1c-c62db2293987",
-                    "expectedControlType": "Axis",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -19,68 +19,13 @@
                     "name": "ClubHeight",
                     "type": "PassThrough",
                     "id": "ee553af6-bf6f-4b30-8ce0-246f6216c285",
-                    "expectedControlType": "Axis",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 }
             ],
             "bindings": [
-                {
-                    "name": "1D Axis",
-                    "id": "7ebf0063-1a15-4a65-a138-9c24c7e856c9",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ClubRotation",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "c6979a65-e2f2-4fbd-94de-a3c848864140",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "ClubRotation",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "negative",
-                    "id": "1a735ea6-6a7d-49f2-884b-e3298079468d",
-                    "path": "<Keyboard>/leftArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "ClubRotation",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "a25ad8f6-8d8f-4cb3-8405-d746723ff906",
-                    "path": "<Keyboard>/d",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "ClubRotation",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "806000f2-e887-43fe-bc8f-69b4a300d128",
-                    "path": "<Keyboard>/rightArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "ClubRotation",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
                 {
                     "name": "1D Axis",
                     "id": "37f162ae-e543-42b8-bd51-8e3eae96cd3f",
@@ -133,6 +78,61 @@
                     "processors": "",
                     "groups": "",
                     "action": "ClubHeight",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "6a9fd0e1-708f-45a6-8d3e-0f1628da548d",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ClubRotation",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "1446352d-9867-4104-b188-dd306139f228",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "ClubRotation",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "negative",
+                    "id": "fa26e66a-ee57-4691-b75f-71d4de48df86",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "ClubRotation",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "c3d01d8e-641c-4e56-8ab3-bb0d37c08b7e",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "ClubRotation",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "44ffcd3b-320e-4752-ac2f-9cd5cc0ce54a",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "ClubRotation",
                     "isComposite": false,
                     "isPartOfComposite": true
                 }
