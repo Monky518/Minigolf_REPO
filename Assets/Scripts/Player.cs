@@ -41,13 +41,12 @@ public class Player : MonoBehaviour
         {
             transform.Rotate(Vector3.up * speed * Time.deltaTime * rotate);
 
-            Debug.Log("Club Rotation: " + club.transform.eulerAngles);
-
-            if (club.transform.eulerAngles.z >= heightMin && club.transform.eulerAngles.z <= heightMax)
+            // ensure club height is in range
+            if (club.transform.eulerAngles.z >= heightMax || club.transform.eulerAngles.z == heightMin)
                 club.transform.Rotate(Vector3.forward * speed * Time.deltaTime * height);
-            else if (club.transform.eulerAngles.z < heightMin)
+            else if (club.transform.eulerAngles.z <= heightMin + 10)
                 club.transform.eulerAngles = new Vector3(club.transform.eulerAngles.x, club.transform.eulerAngles.y, heightMin);
-            else if (club.transform.eulerAngles.z > heightMax)
+            else
                 club.transform.eulerAngles = new Vector3(club.transform.eulerAngles.x, club.transform.eulerAngles.y, heightMax);
         }
     }
