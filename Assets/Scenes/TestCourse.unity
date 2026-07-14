@@ -194,6 +194,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 42535234}
   m_CullTransparentMesh: 1
+--- !u!1 &260048473 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 7e1380b27546d7c4d8a01e08c596305f, type: 3}
+  m_PrefabInstance: {fileID: 2052016631}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &299021532
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -689,7 +694,7 @@ GameObject:
   - component: {fileID: 705387085}
   - component: {fileID: 705387084}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Camera UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -858,11 +863,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   currentGameMode: 1
-  speed: 50
-  heightMin: 0
-  heightMax: 300
+  rotateSpeed: 10
+  gaugeSpeed: 40
   rotateRef: {fileID: -1721352235856316095, guid: 662c902433a3c074287cc1a5850079a9, type: 3}
-  heightRef: {fileID: 3711314430093516005, guid: 662c902433a3c074287cc1a5850079a9, type: 3}
+  gaugeRef: {fileID: 3711314430093516005, guid: 662c902433a3c074287cc1a5850079a9, type: 3}
+  gauge: {fileID: 1100949203}
 --- !u!4 &1087495310
 Transform:
   m_ObjectHideFlags: 0
@@ -988,15 +993,15 @@ RectTransform:
   m_GameObject: {fileID: 1100949202}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.95, y: 0.45, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1167804081}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: -97.5, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -92.25, y: 0}
+  m_SizeDelta: {x: 285, y: 40}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1100949204
 MonoBehaviour:
@@ -1211,6 +1216,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7e1380b27546d7c4d8a01e08c596305f, type: 3}
   m_PrefabInstance: {fileID: 2052016631}
   m_PrefabAsset: {fileID: 0}
+--- !u!111 &1554746530
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 260048473}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Animation: {fileID: 7400000, guid: 2ebb510a15a1d1347bc2a24a0fee1f5d, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 4fa6638ffc7840549883a824c16e9d93, type: 2}
+  - {fileID: 7400000, guid: 7bd37b6ad822a934da96eba50c3cfd7f, type: 2}
+  - {fileID: 7400000, guid: f59c0d0b09c019c4db6573e8ea3f20ac, type: 2}
+  - {fileID: 7400000, guid: 55c6643d34550194ca5c41b2c6e4a03f, type: 2}
+  - {fileID: 7400000, guid: 2e069e2f6683f6740ab85a1d348837e2, type: 2}
+  - {fileID: 7400000, guid: 2ebb510a15a1d1347bc2a24a0fee1f5d, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_UpdateMode: 0
+  m_CullingType: 0
 --- !u!1001 &1601092391
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1338,7 +1365,7 @@ GameObject:
   - component: {fileID: 1960174475}
   - component: {fileID: 1960174474}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Player UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1482,7 +1509,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7e1380b27546d7c4d8a01e08c596305f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -1.6800002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7e1380b27546d7c4d8a01e08c596305f, type: 3}
       propertyPath: m_ConstrainProportionsScale
@@ -1519,7 +1546,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7e1380b27546d7c4d8a01e08c596305f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1554746530}
   m_SourcePrefab: {fileID: 100100000, guid: 7e1380b27546d7c4d8a01e08c596305f, type: 3}
 --- !u!1001 &2075582953
 PrefabInstance:

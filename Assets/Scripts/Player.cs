@@ -11,18 +11,23 @@ public class Player : MonoBehaviour
         BallMovement,
         Results
     }
-    public GameMode currentGameMode= GameMode.PlayerMovement;
+    public GameMode currentGameMode = GameMode.PlayerMovement;
     
-    public float speed;
-    public float heightMin;
-    public float heightMax;
+    public float rotateSpeed;
+    public float gaugeSpeed;
 
     public InputActionReference rotateRef;
-    public InputActionReference heightRef;
+    public InputActionReference gaugeRef;
+    public InputActionReference endPlayerMovementRef;
 
-    private float rotate;
-    private float height;
+    public RectTransform gauge;
+
     private GameObject club;
+    private float powerPercent = 0f;
+
+    private float gaugeHeight = 40f;
+    private float gaugeMinWidth = 5f;
+    private float gaugeMaxWidth = 280f;
 
     void Start()
     {
@@ -31,23 +36,37 @@ public class Player : MonoBehaviour
 
     private void Update() // based on frame rate
     {
-        rotate = rotateRef.action.ReadValue<float>();
-        height = heightRef.action.ReadValue<float>();
+        if (currentGameMode == GameMode.PlayerMovement)
+        {
+            if (!endPlayerMovementRef.action.ReadValue<Boolean>())
+            {
+                transform.Rotate(Vector3.up * rotateSpeed * rotateRef.action.ReadValue<float>() * Time.deltaTime);
+
+                if (powerPercent <= 1f && powerPercent >= 0f)
+                    powerPercent += gaugeSpeed * (gaugeRef.action.ReadValue<float>() / 100) * Time.deltaTime;
+                else if (powerPercent > 1f)
+                    powerPercent = 1f;
+                else if (powerPercent < 0f)
+                    powerPercent = 0f;
+
+                   gauge.sizeDelta = new Vector2(gaugeMaxWidth * powerPercent + gaugeMinWidth, gaugeHeight);
+            } else
+            {
+                currentGameMode = GameMode.BallMovement;
+            }
+        } else if (currentGameMode == GameMode.BallMovement)
+        {
+            // get rid of player ui
+            // start animation
+            // ball moves and camera follows
+            // reset player ui
+            // if not in hole, start player phase
+            // else, start results phase
+        }
     }
 
     void FixedUpdate() // aligned with physics engine
     {
-        if (currentGameMode == GameMode.PlayerMovement)
-        {
-            transform.Rotate(Vector3.up * speed * Time.deltaTime * rotate);
 
-            // ensure club height is in range
-            if (club.transform.eulerAngles.z >= heightMax || club.transform.eulerAngles.z == heightMin)
-                club.transform.Rotate(Vector3.forward * speed * Time.deltaTime * height);
-            else if (club.transform.eulerAngles.z <= heightMin + 10)
-                club.transform.eulerAngles = new Vector3(club.transform.eulerAngles.x, club.transform.eulerAngles.y, heightMin);
-            else
-                club.transform.eulerAngles = new Vector3(club.transform.eulerAngles.x, club.transform.eulerAngles.y, heightMax);
-        }
     }
 }

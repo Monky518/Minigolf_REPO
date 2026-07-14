@@ -16,10 +16,19 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ClubHeight",
+                    "name": "ClubPower",
                     "type": "PassThrough",
                     "id": "ee553af6-bf6f-4b30-8ce0-246f6216c285",
                     "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "EndPlayerMovement",
+                    "type": "Button",
+                    "id": "8f505727-77cf-4a29-b6aa-8c57ca2f6d98",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -33,7 +42,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ClubHeight",
+                    "action": "ClubPower",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -44,7 +53,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ClubHeight",
+                    "action": "ClubPower",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -55,7 +64,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ClubHeight",
+                    "action": "ClubPower",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -66,7 +75,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ClubHeight",
+                    "action": "ClubPower",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -77,7 +86,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ClubHeight",
+                    "action": "ClubPower",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -135,32 +144,26 @@
                     "action": "ClubRotation",
                     "isComposite": false,
                     "isPartOfComposite": true
-                }
-            ]
-        },
-        {
-            "name": "UI",
-            "id": "43ce81ca-3171-4e96-8b82-6b4e11015dad",
-            "actions": [
-                {
-                    "name": "New action",
-                    "type": "Button",
-                    "id": "07c97a71-d521-45e9-bbf0-648496629bc8",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
+                },
                 {
                     "name": "",
-                    "id": "903982de-1819-4f6f-9b71-2bc62d920e6b",
-                    "path": "",
+                    "id": "ea042acc-2f30-49e8-94a1-a9f0870880ff",
+                    "path": "<Keyboard>/enter",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
+                    "action": "EndPlayerMovement",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d15258bf-c277-4179-afb4-6a43e1b98889",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EndPlayerMovement",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
