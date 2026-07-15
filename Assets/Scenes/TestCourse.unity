@@ -862,12 +862,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c97ce0a87a08360409ca0ed62194c904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  currentGameMode: 1
   rotateSpeed: 10
-  gaugeSpeed: 40
-  rotateRef: {fileID: -1721352235856316095, guid: 662c902433a3c074287cc1a5850079a9, type: 3}
-  gaugeRef: {fileID: 3711314430093516005, guid: 662c902433a3c074287cc1a5850079a9, type: 3}
-  gauge: {fileID: 1100949203}
 --- !u!4 &1087495310
 Transform:
   m_ObjectHideFlags: 0
@@ -1001,7 +996,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: -92.25, y: 0}
-  m_SizeDelta: {x: 285, y: 40}
+  m_SizeDelta: {x: 5, y: 40}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1100949204
 MonoBehaviour:
@@ -1206,7 +1201,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -1352,6 +1347,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 826e1965df0672247b6581ee21098e97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  currentGameMode: 1
+  player: {fileID: 1087495308}
+  powerGauge: {fileID: 1167804080}
+  arrow: {fileID: 357847193}
+  rotateRef: {fileID: -1721352235856316095, guid: 662c902433a3c074287cc1a5850079a9, type: 3}
+  gaugeRef: {fileID: 3711314430093516005, guid: 662c902433a3c074287cc1a5850079a9, type: 3}
+  doneRef: {fileID: 2973423825576133781, guid: 662c902433a3c074287cc1a5850079a9, type: 3}
 --- !u!1 &1960174472
 GameObject:
   m_ObjectHideFlags: 0
