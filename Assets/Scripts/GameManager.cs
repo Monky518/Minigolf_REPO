@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
@@ -20,7 +19,7 @@ public class GameManager : MonoBehaviour {
     public InputActionReference gaugeRef;
     public InputActionReference doneRef;
 
-    private float powerPercent = 0f;
+    public float rotateSpeed = 10f;
 
     private float gaugeHeight = 40f;
     private float gaugeMinWidth = 5f;
@@ -30,7 +29,13 @@ public class GameManager : MonoBehaviour {
     private float arrowStartPosition = -0.15f;
     private float arrowRange = 0.3f;
 
-    void Update() {
+    private float powerPercent = 0f;
+    public float ballMinSpeed = 1f;
+    public float ballMaxSpeed = 10f;
+
+    private bool animationComplete = false;
+
+    void FixedUpdate() {
         switch ( currentGameMode ) {
             case GameMode.MainMenu:
                 break;
@@ -38,7 +43,8 @@ public class GameManager : MonoBehaviour {
                 PlayerPhase();
                 break;
             case GameMode.BallMovement:
-                BallMovement();
+                BallStopCheck();
+                CameraFollows();
                 break;
             case GameMode.Results:
                 break;
@@ -47,19 +53,21 @@ public class GameManager : MonoBehaviour {
 
     void PlayerPhase() {
         // check if player is done
-        if ( doneRef.action.ReadValue<float>() == 1f )
+        if ( doneRef.action.ReadValue<float>() == 1f ) {
+            StartAnimation();
             currentGameMode = GameMode.BallMovement;
-        else {
+        } else {
             // check rotate movement
             if ( rotateRef.action.ReadValue<float>() != 0f )
-                player.GetComponent<Player>().RotateClub( rotateRef.action.ReadValue<float>() );
+                player.transform.Rotate( Vector3.up * rotateSpeed * rotateRef.action.ReadValue<float>() * Time.deltaTime );
 
             // check gauge movement
             if ( gaugeRef.action.ReadValue<float>() != 0f ) {
-                // validate power level
                 if ( powerPercent <= 1f && powerPercent >= 0f )
                     powerPercent += gaugeSpeed * (gaugeRef.action.ReadValue<float>() / 100) * Time.deltaTime;
-                else if ( powerPercent > 1f )
+
+                // validate power level
+                if ( powerPercent > 1f )
                     powerPercent = 1f;
                 else if ( powerPercent < 0f )
                     powerPercent = 0f;
@@ -71,7 +79,7 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    void BallMovement() {
+    void StartAnimation() {
         // get rid of player ui
         powerGauge.SetActive( false );
         arrow.SetActive( false );
@@ -100,15 +108,48 @@ public class GameManager : MonoBehaviour {
 
         // wait for animation
         StartCoroutine( WaitForAnimation() );
+    }
 
-        // ball moves and camera follows
+    IEnumerator WaitForAnimation() {
+        yield return new WaitForSeconds( 1f );
+        BallMovement();
+    }
+
+    void BallMovement() {
+        // float normalForce = Physics.gravity.y * rb.mass;
+        // float slopeAngleDeg = Vector3.Angle(other.contacts[0].normal, Vector3.up);
+        // float frictionForce = coefficientOfFriction * normalForce * Mathf.Cos(slopeAngleDeg * Mathf.Deg2Rad);
+        // rb.AddForce( frictionForce * rb.velocity.normalized );
+        // rb.AddTorque( frictionForce * rb.angularVelocity.normalized );
+
+        //ball moves!
+        Rigidbody rbBall = player.transform.Find("Ball").GetComponent<Rigidbody>();
+        rbBall.useGravity = true;
+        // rbBall.linearVelocity = new Vector3( 0f,0f,(ballMaxSpeed - ballMinSpeed) * powerPercent + ballMinSpeed );
+        rbBall.AddRelativeForce( new Vector3( 0f,0f,((ballMaxSpeed - ballMinSpeed) * powerPercent + ballMinSpeed) ),ForceMode.Impulse );
+        Debug.Log( "Ball Speed: " + ((ballMaxSpeed - ballMinSpeed) * powerPercent + ballMinSpeed) );
+        Debug.Log( "Power Percent: " + powerPercent );
+
+        // check if ball is stopped
+        
+
+        // camera follows ball with offset
+
         // reset player ui
         // if not in hole, start player phase
         // else, start results phase
     }
 
-    IEnumerator WaitForAnimation() {
-        yield return new WaitForSeconds( 1f );
-        Debug.Log( "Animation Complete!" );
+    void BallStopCheck() {
+        if ( animationComplete ) {
+            Rigidbody rbBall = player.transform.Find("Ball").GetComponent<Rigidbody>();
+            if (rbBall.linearVelocity.magnitude < 0.01f) {
+                Debug.Log( "STOP THAT BALL!" );
+            }
+        }
+    }
+
+    void CameraFollows() {
+
     }
 }
