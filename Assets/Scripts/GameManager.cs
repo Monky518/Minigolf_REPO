@@ -3,13 +3,8 @@ using UnityEngine.InputSystem;
 using System.Collections;
 
 public class GameManager : MonoBehaviour {
-    public enum GameMode {
-        MainMenu,
-        PlayerPhase,
-        BallMovement,
-        Results
-    }
-    public GameMode currentGameMode = GameMode.PlayerPhase; // temp until menu exists
+    private bool playerCanMove = true;    // temp until main menu exists
+    private bool ballIsMoving = false;
 
     public GameObject player;
     public GameObject powerGauge;
@@ -33,29 +28,19 @@ public class GameManager : MonoBehaviour {
     public float ballMinSpeed = 1f;
     public float ballMaxSpeed = 10f;
 
-    private bool animationComplete = false;
-
     void FixedUpdate() {
-        switch ( currentGameMode ) {
-            case GameMode.MainMenu:
-                break;
-            case GameMode.PlayerPhase:
-                PlayerPhase();
-                break;
-            case GameMode.BallMovement:
-                BallStopCheck();
-                CameraFollows();
-                break;
-            case GameMode.Results:
-                break;
+        if ( playerCanMove ) {
+            PlayerPhase();
+        } else if ( ballIsMoving ) {
+            BallStopCheck();
         }
     }
 
     void PlayerPhase() {
         // check if player is done
         if ( doneRef.action.ReadValue<float>() == 1f ) {
+            playerCanMove = false;
             StartAnimation();
-            currentGameMode = GameMode.BallMovement;
         } else {
             // check rotate movement
             if ( rotateRef.action.ReadValue<float>() != 0f )
@@ -73,8 +58,7 @@ public class GameManager : MonoBehaviour {
                     powerPercent = 0f;
 
                 // update UI
-                powerGauge.transform.Find( "Gauge" ).GetComponent<RectTransform>().sizeDelta = new Vector2( gaugeMaxWidth * powerPercent + gaugeMinWidth,gaugeHeight );
-                arrow.GetComponent<RectTransform>().localPosition = new Vector3( 0,arrowStartPosition + (arrowRange * powerPercent),0 );
+                UpdateUI();
             }
         }
     }
@@ -116,40 +100,68 @@ public class GameManager : MonoBehaviour {
     }
 
     void BallMovement() {
-        // float normalForce = Physics.gravity.y * rb.mass;
-        // float slopeAngleDeg = Vector3.Angle(other.contacts[0].normal, Vector3.up);
-        // float frictionForce = coefficientOfFriction * normalForce * Mathf.Cos(slopeAngleDeg * Mathf.Deg2Rad);
-        // rb.AddForce( frictionForce * rb.velocity.normalized );
-        // rb.AddTorque( frictionForce * rb.angularVelocity.normalized );
-
-        //ball moves!
-        Rigidbody rbBall = player.transform.Find("Ball").GetComponent<Rigidbody>();
+        // ball moves!
+        Rigidbody rbBall = player.transform.Find( "Ball" ).GetComponent<Rigidbody>();
         rbBall.useGravity = true;
-        // rbBall.linearVelocity = new Vector3( 0f,0f,(ballMaxSpeed - ballMinSpeed) * powerPercent + ballMinSpeed );
         rbBall.AddRelativeForce( new Vector3( 0f,0f,((ballMaxSpeed - ballMinSpeed) * powerPercent + ballMinSpeed) ),ForceMode.Impulse );
-        Debug.Log( "Ball Speed: " + ((ballMaxSpeed - ballMinSpeed) * powerPercent + ballMinSpeed) );
-        Debug.Log( "Power Percent: " + powerPercent );
 
-        // check if ball is stopped
-        
+        // get rid of club
+        Debug.Log( "Club is going away!" );
+        player.transform.Find( "Club" ).gameObject.SetActive( false );
 
-        // camera follows ball with offset
+        StartCoroutine( WaitForStartOfBallMovement() );
+    }
 
-        // reset player ui
-        // if not in hole, start player phase
-        // else, start results phase
+    IEnumerator WaitForStartOfBallMovement() {
+        yield return new WaitForSeconds( 1f );
+        ballIsMoving = true;
     }
 
     void BallStopCheck() {
-        if ( animationComplete ) {
-            Rigidbody rbBall = player.transform.Find("Ball").GetComponent<Rigidbody>();
-            if (rbBall.linearVelocity.magnitude < 0.01f) {
-                Debug.Log( "STOP THAT BALL!" );
-            }
+        Rigidbody rbBall = player.transform.Find( "Ball" ).GetComponent<Rigidbody>();
+        Debug.Log( "Checking if ball has stopped" );
+        Debug.Log( "Ball Velocity: " + rbBall.linearVelocity.magnitude );
+        if ( rbBall.linearVelocity.magnitude < 0.01f ) {
+            Debug.Log( "Ball has stopped!" );
+            ballIsMoving = false;
+            // if in hole
+
+            // else if out of course
+            // reset ball and camera* to player position
+            // RepositionPlayer( player.transform.position );
+
+            // else
+            // reposition player and ball
+            RepositionPlayer( player.transform.Find( "Ball" ).transform.position );
+
+            // reset player phase and UI
+            ResetPlayerPhase();
+        } else {
+            Debug.Log( "Ball is moving!" );
         }
     }
 
-    void CameraFollows() {
+    void RepositionPlayer( Vector3 playerPosition ) {
+        // set player position
+        player.transform.position = playerPosition;
+        // update ball to match
+        player.transform.Find( "Ball" ).transform.localPosition = new Vector3( 0,0,0 );
+    }
 
+    void ResetPlayerPhase() {
+        powerGauge.SetActive( true );
+        arrow.SetActive( true );
+        Debug.Log( "Club is coming back!" );
+        player.transform.Find( "Club" ).gameObject.SetActive( true );
+
+        powerPercent = 0f;
+        UpdateUI();
+
+        playerCanMove = true;
+    }
+
+    void UpdateUI() {
+        powerGauge.transform.Find( "Gauge" ).GetComponent<RectTransform>().sizeDelta = new Vector2( gaugeMaxWidth * powerPercent + gaugeMinWidth,gaugeHeight );
+        arrow.GetComponent<RectTransform>().localPosition = new Vector3( 0,arrowStartPosition + (arrowRange * powerPercent),0 );
     }
 }
