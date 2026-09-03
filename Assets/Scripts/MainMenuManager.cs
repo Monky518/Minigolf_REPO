@@ -26,7 +26,7 @@ public class MainMenuManager: MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("Connected");
-        SceneManager.LoadScene("Test Course");
+        SceneManager.LoadScene("Lobby");
     }
 
     void LoadingUI()
