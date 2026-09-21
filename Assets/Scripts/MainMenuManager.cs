@@ -2,38 +2,37 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Photon.Pun;
+using TMPro;
 
 public class MainMenuManager: MonoBehaviourPunCallbacks
 {
-    public GameObject offlineButton;
-    public GameObject onlineButton;
     public GameObject loadingText;
     public Image backgroundImage;
     
     public void OnClickStartOffline()
     {
-        Debug.Log("Chosen Offline");
+        LoadingUI("Loading Test Course...");
         SceneManager.LoadScene("Test Course");
     }
     
     public void OnClickStartOnline()
     {
         PhotonNetwork.ConnectUsingSettings();
-        Debug.Log("ClickStart");
-        LoadingUI();
+        LoadingUI("Loading Lobby...");
     }
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Connected");
         SceneManager.LoadScene("Lobby");
     }
 
-    void LoadingUI()
+    void LoadingUI(string text)
     {
-        offlineButton.SetActive(false);
-        onlineButton.SetActive(false);
+        GameObject[] uiElements = GameObject.FindGameObjectsWithTag("UI");
+        foreach (GameObject element in uiElements)
+            element.SetActive(false);
         backgroundImage.GetComponent<Image>().color = new Color32(227, 157, 197, 255);
+        loadingText.GetComponent<TMP_Text>().text = text;
         loadingText.SetActive(true);
     }
 }
