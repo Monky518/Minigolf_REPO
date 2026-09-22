@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: bc8c8ac1c7890114eaaba3accc18eba0
   - enabled: 1
+    path: Assets/Scenes/Room.unity
+    guid: d4cbda81bd86e0d489a7bd130d6d3842
+  - enabled: 1
     path: Assets/Scenes/Test Course.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:

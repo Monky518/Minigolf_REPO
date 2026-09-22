@@ -34,7 +34,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Joined Room: " + PhotonNetwork.CurrentRoom.Name);
         LoadingUI($"Loading {GetRoomName()}...");
-        SceneManager.LoadScene("Test Course");
+        SceneManager.LoadScene("Room");
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -45,7 +45,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             if (room.PlayerCount > 0)
                 sb.AppendLine($"   ( {room.PlayerCount} / 3 Players ) - {room.Name}");
             else
-                sb.AppendLine("No Rooms Found");
+                sb.AppendLine("No Rooms Available");
             roomListText.text = sb.ToString();
         }
     }
