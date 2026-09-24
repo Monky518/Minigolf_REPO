@@ -50,6 +50,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void OnClickReturn()
+    {
+        LoadingUI("Leaving lobby...");
+        PhotonNetwork.Disconnect();
+        SceneManager.LoadScene("Main Menu");
+    }
+
     public void OnClickCreateRoom()
     {
         string roomName = GetRoomName();
