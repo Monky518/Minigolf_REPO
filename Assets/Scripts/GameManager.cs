@@ -43,25 +43,25 @@ public class GameManager : MonoBehaviour
         {
             currentState = GameState.ClubSwing;
             UpdateUIState(false);
-            await player.GetComponent<Player>().SwingClub();
+            await player.GetComponent<GolfPlayer>().SwingClub();
             currentState = GameState.BallPhase;
         }
         else
         {
             if (rotateRef.action.ReadValue<float>() != 0f)
-                player.GetComponent<Player>().RotateClub(rotateRef.action.ReadValue<float>());
+                player.GetComponent<GolfPlayer>().RotateClub(rotateRef.action.ReadValue<float>());
 
             if (gaugeRef.action.ReadValue<float>() != 0f)
             {
-                player.GetComponent<Player>().UpdatePower(gaugeRef.action.ReadValue<float>() / 100);
-                MoveUI(player.GetComponent<Player>().powerPercent);
+                player.GetComponent<GolfPlayer>().UpdatePower(gaugeRef.action.ReadValue<float>() / 100);
+                MoveUI(player.GetComponent<GolfPlayer>().powerPercent);
             }
         }
     }
 
     void BallPhase()
     {
-        GameObject ball = player.GetComponent<Player>().ball;
+        GameObject ball = player.GetComponent<GolfPlayer>().ball;
 
         if (!ball.GetComponent<Ball>().BallMovementCheck())
         {
@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
             // do thing
             // else
             // play continues
-            player.GetComponent<Player>().UpdatePlayerPosition(ball.transform.position);
+            player.GetComponent<GolfPlayer>().UpdatePlayerPosition(ball.transform.position);
             ball.GetComponent<Ball>().ResetBallPositionAndRotation();
             ResetPlayerPhase();
         }
@@ -83,9 +83,9 @@ public class GameManager : MonoBehaviour
     void ResetPlayerPhase()
     {
         UpdateUIState(true);
-        player.GetComponent<Player>().UpdateClubState(true);
-        player.GetComponent<Player>().UpdatePower(-1f);
-        MoveUI(player.GetComponent<Player>().powerPercent);
+        player.GetComponent<GolfPlayer>().UpdateClubState(true);
+        player.GetComponent<GolfPlayer>().UpdatePower(-1f);
+        MoveUI(player.GetComponent<GolfPlayer>().powerPercent);
         currentState = GameState.PlayerPhase;
     }
 

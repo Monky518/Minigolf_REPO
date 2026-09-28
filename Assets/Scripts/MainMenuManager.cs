@@ -8,7 +8,12 @@ public class MainMenuManager: MonoBehaviourPunCallbacks
 {
     public GameObject loadingText;
     public Image backgroundImage;
-    
+
+    public override void OnConnectedToMaster()
+    {
+        SceneManager.LoadScene("Lobby");
+    }
+
     public void OnClickStartOffline()
     {
         LoadingUI("Loading Test Course...");
@@ -17,16 +22,12 @@ public class MainMenuManager: MonoBehaviourPunCallbacks
     
     public void OnClickStartOnline()
     {
+        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
         LoadingUI("Loading Lobby...");
     }
 
-    public override void OnConnectedToMaster()
-    {
-        SceneManager.LoadScene("Lobby");
-    }
-
-    void LoadingUI(string text)
+    public void LoadingUI(string text)
     {
         GameObject[] uiElements = GameObject.FindGameObjectsWithTag("UI");
         foreach (GameObject element in uiElements)

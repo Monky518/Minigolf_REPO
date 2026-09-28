@@ -22,34 +22,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
         else
         {
-            roomName.text = "Current Room: " + PhotonNetwork.CurrentRoom.Name;
+            roomName.text = $"Current Room: {PhotonNetwork.CurrentRoom.Name}";
             UpdatePlayers();
         }
-    }
-
-    private void UpdatePlayers()
-    {
-        // Instead of a player list, I want the names to be above the their club and ball color.
-        //      Later, they can choose their own color. It is based on join order right now.
-
-        Photon.Realtime.Player[] players = PhotonNetwork.PlayerList;
-        for (int i = 0; i < 3; i++)
-        {
-            if (players.Length > i)
-            {
-                if (players[i].NickName != "")
-                    colorTexts[i].text = players[i].NickName;
-                else
-                {
-                    Debug.Log("Player " + i + " does not have a nickname");
-                    colorTexts[i].text = "Player " + i;
-                }
-            }
-            else
-                colorTexts[i].text = "";
-        }
-
-        startButton.interactable = PhotonNetwork.IsMasterClient;
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -67,26 +42,56 @@ public class RoomManager : MonoBehaviourPunCallbacks
         UpdatePlayers();
     }
 
+    public override void OnLeftRoom()
+    {
+        SceneManager.LoadScene("Lobby");
+    }
+
+    private void UpdatePlayers()
+    {
+        Player[] players = PhotonNetwork.PlayerList;
+        for (int i = 0; i < 3; i++)
+        {
+            if (players.Length > i)
+            {
+                if (players[i].NickName != "")
+                    colorTexts[i].text = players[i].NickName;
+                else
+                {
+                    Debug.Log($"Player {(i + 1)} does not have a nickname");
+                    colorTexts[i].text = $"Player {(i + 1)}";
+                }
+            }
+            else
+                colorTexts[i].text = "";
+        }
+
+        startButton.interactable = PhotonNetwork.IsMasterClient;
+    }
+
     public void OnClickStartGame()
     {
-        LoadingUI("Loading Test Course...");
-        SceneManager.LoadScene("Test Course");
+        if (PhotonNetwork.IsMasterClient)
+        {
+            LoadingUI("Loading Test Course...");
+            PhotonNetwork.LoadLevel("Test Course");
+        }
     }
 
     public void OnClickRoomSettings()
     {
         // allow pop up for room settings
+        // should this be master client only?
         Debug.Log("Clicked Room Settings, which is not implemented yet");
     }
 
     public void OnClickLeaveRoom()
     {
         LoadingUI("Leaving room...");
-        PhotonNetwork.Disconnect();
-        SceneManager.LoadScene("Main Menu");
+        PhotonNetwork.LeaveRoom();
     }
 
-    void LoadingUI(string text)
+    public void LoadingUI(string text)
     {
         GameObject[] uiElements = GameObject.FindGameObjectsWithTag("UI");
         foreach (GameObject element in uiElements)

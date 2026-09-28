@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Threading.Tasks;
 
-public class Player : MonoBehaviour
+public class GolfPlayer : MonoBehaviour
 {
     public float powerPercent = 0f;
     public float powerSpeed = 50f;

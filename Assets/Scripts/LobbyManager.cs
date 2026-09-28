@@ -10,6 +10,7 @@ using Photon.Realtime;
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     public TMP_InputField roomNameInput;
+    public TMP_InputField playerNameInput;
     public TextMeshProUGUI roomListText;
     public GameObject loadingText;
     public Image backgroundImage;
@@ -25,14 +26,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             PhotonNetwork.JoinLobby();
     }
 
-    public override void OnJoinedLobby()
-    {
-        Debug.Log("Successfully Joined Lobby");
-    }
-
     public override void OnJoinedRoom()
     {
-        Debug.Log("Joined Room: " + PhotonNetwork.CurrentRoom.Name);
+        Debug.Log($"Joined Room: {PhotonNetwork.CurrentRoom.Name}");
         LoadingUI($"Loading {GetRoomName()}...");
         SceneManager.LoadScene("Room");
     }
@@ -50,17 +46,25 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        SceneManager.LoadScene("Main Menu");
+    }
+
     public void OnClickReturn()
     {
         LoadingUI("Leaving lobby...");
         PhotonNetwork.Disconnect();
-        SceneManager.LoadScene("Main Menu");
     }
 
     public void OnClickCreateRoom()
     {
+        string playerName = GetPlayerName();
+        if (!string.IsNullOrEmpty(playerName))
+            PhotonNetwork.LocalPlayer.NickName = playerName;
+        
         string roomName = GetRoomName();
-        if (roomName != null)
+        if (!string.IsNullOrEmpty(roomName))
             PhotonNetwork.CreateRoom(roomName);
 
         // if that room name already exists, show error message
@@ -68,14 +72,20 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public void OnClickJoinRoom()
     {
+        string playerName = GetPlayerName();
+        if (!string.IsNullOrEmpty(playerName))
+            PhotonNetwork.LocalPlayer.NickName = playerName;
+
         string roomName = GetRoomName();
-        if (roomName != null)
+        if (!string.IsNullOrEmpty(roomName))
             PhotonNetwork.JoinRoom(roomName);
 
         // if that room does not exist, show error message
+
+        // if room is full, show error message
     }
 
-    void LoadingUI(string text)
+    public void LoadingUI(string text)
     {
         GameObject[] uiElements = GameObject.FindGameObjectsWithTag("UI");
         foreach (GameObject element in uiElements)
@@ -95,5 +105,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             Debug.Log("Invalid Room Name ( Nothing Written )");
             return null;
         }
+    }
+
+    public string GetPlayerName()
+    {
+        string playerName = playerNameInput.text;
+        return playerName.Trim();
     }
 }
