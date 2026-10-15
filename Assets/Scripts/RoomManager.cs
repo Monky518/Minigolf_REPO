@@ -1,9 +1,13 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
-using TMPro;
+using WebSocketSharp;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
@@ -54,13 +58,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             if (players.Length > i)
             {
-                if (players[i].NickName != "")
-                    colorTexts[i].text = players[i].NickName;
-                else
+                Debug.Log($"Player {i} Name: {players[i].NickName}");
+
+                if (players[i].NickName.IsNullOrEmpty())
                 {
-                    Debug.Log($"Player {(i + 1)} does not have a nickname");
-                    colorTexts[i].text = $"Player {(i + 1)}";
+                    players[i].NickName = $"Player {i + 1}";
                 }
+                colorTexts[i].text = players[i].NickName;
             }
             else
                 colorTexts[i].text = "";
@@ -73,8 +77,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            LoadingUI("Loading Test Course...");
-            PhotonNetwork.LoadLevel("Test Course");
+            LoadingUI("Loading Game...");
+            PhotonNetwork.LoadLevel("Temp Game Scene");
         }
     }
 

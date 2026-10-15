@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
@@ -62,7 +63,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         string playerName = GetPlayerName();
         if (!string.IsNullOrEmpty(playerName))
             PhotonNetwork.LocalPlayer.NickName = playerName;
-        
+
         string roomName = GetRoomName();
         if (!string.IsNullOrEmpty(roomName))
             PhotonNetwork.CreateRoom(roomName);
@@ -101,7 +102,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         roomName.Trim();
         if (roomName.Length > 0)
             return roomName;
-        else{
+        else
+        {
             Debug.Log("Invalid Room Name ( Nothing Written )");
             return null;
         }

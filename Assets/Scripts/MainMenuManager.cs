@@ -1,10 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Photon.Pun;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 using TMPro;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class MainMenuManager: MonoBehaviourPunCallbacks
+public class MainMenuManager : MonoBehaviourPunCallbacks
 {
     public GameObject loadingText;
     public Image backgroundImage;
@@ -19,7 +23,7 @@ public class MainMenuManager: MonoBehaviourPunCallbacks
         LoadingUI("Loading Test Course...");
         SceneManager.LoadScene("Test Course");
     }
-    
+
     public void OnClickStartOnline()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
