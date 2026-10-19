@@ -7,6 +7,8 @@ using System.Text;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Pun.UtilityScripts;
+using WebSocketSharp;
 
 public class TempGameManager : MonoBehaviourPunCallbacks
 {
@@ -35,10 +37,9 @@ public class TempGameManager : MonoBehaviourPunCallbacks
             alivePlayerMap[player] = true;
         }
 
-        // spawns the master client aka the first player aka the host
         float x = Random.Range(boundsMin, boundsMax);
         float z = Random.Range(boundsMin, boundsMax);
-        PhotonNetwork.Instantiate("flag-red_var", new Vector3(x, y, z), Quaternion.identity);
+        PhotonNetwork.Instantiate("flag-green_var", new Vector3(x, y, z), Quaternion.identity);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)

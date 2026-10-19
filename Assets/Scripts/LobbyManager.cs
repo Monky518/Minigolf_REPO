@@ -29,7 +29,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        Debug.Log($"Joined Room: {PhotonNetwork.CurrentRoom.Name}");
         LoadingUI($"Loading {GetRoomName()}...");
         SceneManager.LoadScene("Room");
     }

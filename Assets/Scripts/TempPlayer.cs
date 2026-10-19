@@ -7,50 +7,24 @@ using System.Text;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Pun.UtilityScripts;
+using WebSocketSharp;
 
 public class TempPlayer : MonoBehaviourPunCallbacks
 {
-    //public GameObject playerPrefab;
-
-    //public float min = 0.49f;
-    //public float max = 0.49f;
-    //public float y = 0.06f;
-
-    //void OnEnable()
-    //{
-    //    if (PhotonNetwork.InRoom)
-    //        SpawnPlayer();
-    //}
-
-    //public override void OnJoinedRoom()
-    //{
-    //    SpawnPlayer();
-    //}
-
-    //private void SpawnPlayer()
-    //{
-    //    if (playerPrefab == null)
-    //    {
-    //        return;
-    //    }
-
-    //    float x = Random.Range(min, max);
-    //    float z = Random.Range(min, max);
-    //    Vector3 spawnPosition = new Vector3(x, y, z);
-
-    //    PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition, Quaternion.identity);
-    //}
-
     private Transform tf;
-    public PhotonView pv;
+    private PhotonView pv;
     private TempGameManager tempGM;
     private TextMeshProUGUI nametag;
 
     public float hp = 100f;
-    public float speed;
-    public float bulletPower;
-    public float bulletSpeed;
-    public string bulletName;
+    public float speed = 5f;
+
+    public float bulletPower = 10f;
+    public float bulletSpeed = 6f;
+    public float bulletCooldown = 60f;
+    private float bulletTimer = 0f;
+    private string ballColor = "";
 
     private float min;
     private float max;
@@ -72,7 +46,16 @@ public class TempPlayer : MonoBehaviourPunCallbacks
         }
 
         nametag = transform.Find("Canvas/Player Nametag").GetComponent<TextMeshProUGUI>();
-        nametag.text = PhotonNetwork.LocalPlayer.NickName;
+        nametag.text = pv.Owner.NickName;
+
+        if (gameObject.name.Contains("red"))
+            ballColor = "ball-red_var";
+        else if (gameObject.name.Contains("green"))
+            ballColor = "ball-green_var";
+        else if (gameObject.name.Contains("blue"))
+            ballColor = "ball-blue_var";
+        else
+            Debug.Log("Error: Player does not have a color");
     }
 
     void Update()
@@ -99,35 +82,68 @@ public class TempPlayer : MonoBehaviourPunCallbacks
 
     void Control()
     {
+        bool[] direction = new bool[4];
+        for (int i = 0; i < direction.Length; i++)
+        {
+            direction[i] = false;
+        }
+
         if (Input.GetKey(KeyCode.W))
         {
             tf.position += Vector3.forward * speed * Time.deltaTime;
+            direction[0] = true;
         }
 
         if (Input.GetKey(KeyCode.A))
         {
             tf.position += Vector3.left * speed * Time.deltaTime;
+            direction[1] = true;
         }
 
         if (Input.GetKey(KeyCode.S))
         {
             tf.position += Vector3.back * speed * Time.deltaTime;
+            direction[2] = true;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
             tf.position += Vector3.right * speed * Time.deltaTime;
+            direction[3] = true;
         }
 
-        if (Input.GetKey(KeyCode.Space))
+        if (bulletTimer <= 0f)
         {
-            //Vector3 offset = new Vector3(0.1f, 0, 0);
-            //GameObject bullet = PhotonNetwork.Instantiate(bulletName, tf.position + offset, Quaternion.identity);
-            // add bullet movement here ( goal: without rigidbody )
+            if (Input.GetKey(KeyCode.Space))
+            {
+                bulletTimer = bulletCooldown;
+
+                float x = 0;
+                float z = 0;
+                if (direction[0])
+                    z += 0.1f;
+                if (direction[1])
+                    x -= 0.1f;
+                if (direction[2])
+                    z -= 0.1f;
+                if (direction[3])
+                    x += 0.1f;
+                Vector3 offset = new Vector3(x, 0.9f, z);
+
+                if (!ballColor.IsNullOrEmpty())
+                {
+                    GameObject bullet = PhotonNetwork.Instantiate(ballColor, tf.position + offset, Quaternion.identity);
+                    bullet.GetComponent<TempBullet>().SetBulletDirection(x, z, bulletSpeed);
+                }
+            }
+        }
+        else
+        {
+            bulletTimer -= 1f;
         }
     }
 
-    private void OnCollisionEnter(Collision other)
+    private void OnTriggerEnter(Collider other)
     {
         if (pv != null && pv.IsMine)
         {
@@ -138,9 +154,9 @@ public class TempPlayer : MonoBehaviourPunCallbacks
                 {
                     hp -= bulletPower;
 
-                    string attackerName = bulletPv.Owner.NickName;
-                    string myName = pv.Owner.NickName;
-                    tempGM.CallRpcSendMessageToAll($"{attackerName} hit {myName}");
+                    // string attackerName = bulletPv.Owner.NickName;
+                    // string myName = pv.Owner.NickName;
+                    // tempGM.CallRpcSendMessageToAll($"{attackerName} hit {myName}");
 
                     if (hp <= 0)
                     {

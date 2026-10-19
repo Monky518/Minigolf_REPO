@@ -288,12 +288,24 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5754084199372789682, guid: 1183df40637d8824b9024341e508943f, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -6705289160009553747, guid: 1183df40637d8824b9024341e508943f, type: 3}
     - target: {fileID: 919132149155446097, guid: 1183df40637d8824b9024341e508943f, type: 3}
       propertyPath: m_Name
       value: flag-red_var
       objectReference: {fileID: 0}
     - target: {fileID: 3451118302482216456, guid: 1183df40637d8824b9024341e508943f, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -6705289160009553747, guid: 1183df40637d8824b9024341e508943f, type: 3}
+    - target: {fileID: 3451118302482216456, guid: 1183df40637d8824b9024341e508943f, type: 3}
       propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3451118302482216456, guid: 1183df40637d8824b9024341e508943f, type: 3}
+      propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -303,9 +315,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 863578195728850815}
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1183df40637d8824b9024341e508943f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6550808615231248012}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1183df40637d8824b9024341e508943f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2603808228792378850}
@@ -318,6 +327,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1183df40637d8824b9024341e508943f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7168633203935682686}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1183df40637d8824b9024341e508943f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 559634444090139873}
   m_SourcePrefab: {fileID: 100100000, guid: 1183df40637d8824b9024341e508943f, type: 3}
 --- !u!4 &8301026611915561584 stripped
 Transform:
@@ -329,27 +341,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1183df40637d8824b9024341e508943f, type: 3}
   m_PrefabInstance: {fileID: 8410915151564766619}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &6550808615231248012
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8680964351801868490}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.1, y: 1, z: 0.1}
-  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!114 &2603808228792378850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,12 +376,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ec7e358b5938104b8ba56bdce918d49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TempPlayer
-  pv: {fileID: 0}
   hp: 100
   speed: 5
-  bulletPower: 2
-  bulletSpeed: 0
-  bulletName: 
+  bulletPower: 10
+  bulletSpeed: 6
+  bulletCooldown: 60
 --- !u!114 &3763391088478216988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -430,3 +420,30 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!54 &559634444090139873
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8680964351801868490}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 1
+  m_AngularDamping: 1
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

@@ -58,8 +58,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             if (players.Length > i)
             {
-                Debug.Log($"Player {i} Name: {players[i].NickName}");
-
                 if (players[i].NickName.IsNullOrEmpty())
                 {
                     players[i].NickName = $"Player {i + 1}";
