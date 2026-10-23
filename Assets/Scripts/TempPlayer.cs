@@ -39,13 +39,9 @@ public class TempPlayer : MonoBehaviourPunCallbacks
         min = tempGM.boundsMin;
         max = tempGM.boundsMax;
         y = tempGM.y;
+
         audioSource = tempGM.audioSource;
         impactSound = tempGM.impactSound;
-
-        if (!pv.IsMine)
-        {
-            Destroy(this);
-        }
 
         nametag.text = pv.Owner.NickName;
     }
@@ -56,7 +52,6 @@ public class TempPlayer : MonoBehaviourPunCallbacks
         {
             Control();
 
-            // make sure everything is in bounds
             if (tf.position.x >= max)
                 tf.position = new Vector3(max, y, tf.position.z);
             else if (tf.position.x <= min)
@@ -167,7 +162,7 @@ public class TempPlayer : MonoBehaviourPunCallbacks
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, HashTable changedProps)
     {
-        if (targetPlayer == pv.Owner)
+        if (targetPlayer == pv.Owner && changedProps.ContainsKey("hp"))
         {
             hp = (float)changedProps["hp"];
             healthBar.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, healthBarWidth * (hp / 100));
