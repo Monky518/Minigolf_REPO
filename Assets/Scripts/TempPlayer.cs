@@ -1,34 +1,34 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
-using Photon.Pun.UtilityScripts;
-using WebSocketSharp;
+using HashTable = ExitGames.Client.Photon.Hashtable;
 
 public class TempPlayer : MonoBehaviourPunCallbacks
 {
     private Transform tf;
     private PhotonView pv;
     private TempGameManager tempGM;
-    private TextMeshProUGUI nametag;
+
+    [SerializeField] private GameObject bullet;
+    [SerializeField] private TextMeshProUGUI nametag;
+    [SerializeField] private Image healthBar;
 
     public float hp = 100f;
-    public float speed = 5f;
+    [SerializeField] private float healthBarWidth = 80f;
+    [SerializeField] private float speed = 5f;
 
-    public float bulletPower = 10f;
-    public float bulletSpeed = 6f;
-    public float bulletCooldown = 60f;
+    [SerializeField] private float bulletPower = 10f;
+    [SerializeField] private float bulletSpeed = 6f;
+    [SerializeField] private float bulletCooldown = 60f;
     private float bulletTimer = 0f;
-    private string ballColor = "";
 
     private float min;
     private float max;
     private float y;
+    private AudioSource audioSource;
+    private AudioClip impactSound;
 
     void Start()
     {
@@ -39,23 +39,15 @@ public class TempPlayer : MonoBehaviourPunCallbacks
         min = tempGM.boundsMin;
         max = tempGM.boundsMax;
         y = tempGM.y;
+        audioSource = tempGM.audioSource;
+        impactSound = tempGM.impactSound;
 
         if (!pv.IsMine)
         {
             Destroy(this);
         }
 
-        nametag = transform.Find("Canvas/Player Nametag").GetComponent<TextMeshProUGUI>();
         nametag.text = pv.Owner.NickName;
-
-        if (gameObject.name.Contains("red"))
-            ballColor = "ball-red_var";
-        else if (gameObject.name.Contains("green"))
-            ballColor = "ball-green_var";
-        else if (gameObject.name.Contains("blue"))
-            ballColor = "ball-blue_var";
-        else
-            Debug.Log("Error: Player does not have a color");
     }
 
     void Update()
@@ -130,9 +122,9 @@ public class TempPlayer : MonoBehaviourPunCallbacks
                     x += 0.1f;
                 Vector3 offset = new Vector3(x, 0.9f, z);
 
-                if (!ballColor.IsNullOrEmpty())
+                if (bullet != null)
                 {
-                    GameObject bullet = PhotonNetwork.Instantiate(ballColor, tf.position + offset, Quaternion.identity);
+                    GameObject bullet = PhotonNetwork.Instantiate(this.bullet.name, tf.position + offset, Quaternion.identity);
                     bullet.GetComponent<TempBullet>().SetBulletDirection(x, z, bulletSpeed);
                 }
             }
@@ -141,6 +133,11 @@ public class TempPlayer : MonoBehaviourPunCallbacks
         {
             bulletTimer -= 1f;
         }
+    }
+
+    public void Dead()
+    {
+        PhotonNetwork.Destroy(this.gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -152,11 +149,11 @@ public class TempPlayer : MonoBehaviourPunCallbacks
                 PhotonView bulletPv = other.gameObject.GetComponent<PhotonView>();
                 if (bulletPv != null && !bulletPv.IsMine)
                 {
+                    HashTable table = new HashTable();
                     hp -= bulletPower;
-
-                    // string attackerName = bulletPv.Owner.NickName;
-                    // string myName = pv.Owner.NickName;
-                    // tempGM.CallRpcSendMessageToAll($"{attackerName} hit {myName}");
+                    table.Add("hp", hp);
+                    PhotonNetwork.LocalPlayer.SetCustomProperties(table);
+                    audioSource.PlayOneShot(impactSound);
 
                     if (hp <= 0)
                     {
@@ -168,9 +165,12 @@ public class TempPlayer : MonoBehaviourPunCallbacks
         }
     }
 
-    public void Dead()
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, HashTable changedProps)
     {
-        PhotonNetwork.Destroy(this.gameObject);
-        tempGM.CallRpcLocalPlayerDead();
+        if (targetPlayer == pv.Owner)
+        {
+            hp = (float)changedProps["hp"];
+            healthBar.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, healthBarWidth * (hp / 100));
+        }
     }
 }

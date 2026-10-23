@@ -1,19 +1,16 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
-using Photon.Pun.UtilityScripts;
 using WebSocketSharp;
 
 public class TempGameManager : MonoBehaviourPunCallbacks
 {
     public Dictionary<Player, bool> alivePlayerMap = new Dictionary<Player, bool>();
 
+    public AudioSource audioSource;
+    public AudioClip impactSound;
     public float boundsMin = -4.8f;
     public float boundsMax = 4.8f;
     public float y = 0.06f;
@@ -39,7 +36,21 @@ public class TempGameManager : MonoBehaviourPunCallbacks
 
         float x = Random.Range(boundsMin, boundsMax);
         float z = Random.Range(boundsMin, boundsMax);
-        PhotonNetwork.Instantiate("flag-green_var", new Vector3(x, y, z), Quaternion.identity);
+
+        // this was taken from Google and modified
+        // it does not work :(
+        string[] flagColors = new string[3] { "flag-red_var", "flag-green_var", "flag-blue_var" };
+        string flagColor = "flag-red_var"; // set red as default until actual color changes are implemented
+        for (int i = 1; i <= flagColors.Length; i++)
+        {
+            if (GetPlayerIndex(PhotonNetwork.LocalPlayer) % 3 == i)
+                flagColor = flagColors[i - 1];
+        }
+
+        if (!flagColor.IsNullOrEmpty())
+            PhotonNetwork.Instantiate(flagColor, new Vector3(x, y, z), Quaternion.identity);
+        else
+            Debug.Log("Error: Flag Color is empty");
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -65,13 +76,15 @@ public class TempGameManager : MonoBehaviourPunCallbacks
         Debug.Log("Check Game Over does nothing");
     }
 
-    public void CallRpcSendMessageToAll(string message)
+    // this was taken from Google
+    private int GetPlayerIndex(Player player)
     {
-        Debug.Log($"Call Rpc Send Message to All does nothing: {message}");
-    }
-
-    public void CallRpcLocalPlayerDead()
-    {
-        Debug.Log("Call Rpc Local Player Dead does nothing");
+        Player[] sortedPlayers = PhotonNetwork.PlayerList;
+        for (int i = 0; i < sortedPlayers.Length; i++)
+        {
+            if (sortedPlayers[i].ActorNumber == player.ActorNumber)
+                return i;
+        }
+        return 0;
     }
 }
