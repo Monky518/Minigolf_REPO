@@ -148,9 +148,16 @@ public class TempPlayer : MonoBehaviourPunCallbacks
                     hp -= bulletPower;
                     table.Add("hp", hp);
                     PhotonNetwork.LocalPlayer.SetCustomProperties(table);
+
                     audioSource.PlayOneShot(impactSound);
 
-                    if (hp <= 0)
+                    tempGM.CallRpcSendMessageToAll($"{bulletPv.Owner.NickName} hit {pv.Owner.NickName}!");
+
+                    if (hp <= 10 && hp > 0)
+                    {
+                        tempGM.CallRpcSendMessageToAll($"{pv.Owner.NickName} is low on health!");
+                    }
+                    else if (hp <= 0)
                     {
                         PhotonNetwork.Destroy(this.gameObject);
                         Dead();

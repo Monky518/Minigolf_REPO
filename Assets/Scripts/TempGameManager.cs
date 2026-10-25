@@ -4,13 +4,21 @@ using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
 using WebSocketSharp;
+using TMPro;
 
 public class TempGameManager : MonoBehaviourPunCallbacks
 {
+    private PhotonView pv;
+
     public Dictionary<Player, bool> alivePlayerMap = new Dictionary<Player, bool>();
 
     public AudioSource audioSource;
     public AudioClip impactSound;
+
+    private List<string> messageList = new List<string>();
+    [SerializeField] private TextMeshProUGUI messageText;
+    [SerializeField] private TextMeshProUGUI roomNameText;
+
     public float boundsMin = -4.8f;
     public float boundsMax = 4.8f;
     public float y = 0.06f;
@@ -23,7 +31,11 @@ public class TempGameManager : MonoBehaviourPunCallbacks
             return;
         }
         else
+        {
+            pv = gameObject.GetComponent<PhotonView>();
+            roomNameText.text = $"{PhotonNetwork.CurrentRoom.Name} Room";
             StartGame();
+        }
     }
 
     public void StartGame()
@@ -37,20 +49,36 @@ public class TempGameManager : MonoBehaviourPunCallbacks
         float x = Random.Range(boundsMin, boundsMax);
         float z = Random.Range(boundsMin, boundsMax);
 
-        // this was taken from Google and modified
-        // it does not work :(
-        string[] flagColors = new string[3] { "flag-red_var", "flag-green_var", "flag-blue_var" };
-        string flagColor = "flag-red_var"; // set red as default until actual color changes are implemented
-        for (int i = 1; i <= flagColors.Length; i++)
-        {
-            if (GetPlayerIndex(PhotonNetwork.LocalPlayer) % 3 == i)
-                flagColor = flagColors[i - 1];
-        }
-
+        string flagColor = "flag-red_var";
         if (!flagColor.IsNullOrEmpty())
             PhotonNetwork.Instantiate(flagColor, new Vector3(x, y, z), Quaternion.identity);
         else
             Debug.Log("Error: Flag Color is empty");
+    }
+
+    [PunRPC]
+    public void RpcSendMessage(string message, PhotonMessageInfo info)
+    {
+        if (messageList.Count >= 8)
+            messageList.RemoveAt(0);
+        messageList.Add(message);
+        UpdateMessage();
+    }
+
+    public void CallRpcSendMessageToAll(string message)
+    {
+        pv.RPC("RpcSendMessage", RpcTarget.All, message);
+    }
+
+    public void UpdateMessage()
+    {
+        if (messageText != null)
+            messageText.text = string.Join("\n", messageList);
+    }
+
+    private void CheckGameOver()
+    {
+        Debug.Log("Check Game Over does nothing");
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -69,22 +97,5 @@ public class TempGameManager : MonoBehaviourPunCallbacks
         {
             CheckGameOver();
         }
-    }
-
-    private void CheckGameOver()
-    {
-        Debug.Log("Check Game Over does nothing");
-    }
-
-    // this was taken from Google
-    private int GetPlayerIndex(Player player)
-    {
-        Player[] sortedPlayers = PhotonNetwork.PlayerList;
-        for (int i = 0; i < sortedPlayers.Length; i++)
-        {
-            if (sortedPlayers[i].ActorNumber == player.ActorNumber)
-                return i;
-        }
-        return 0;
     }
 }
