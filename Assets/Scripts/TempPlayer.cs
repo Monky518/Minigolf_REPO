@@ -130,11 +130,6 @@ public class TempPlayer : MonoBehaviourPunCallbacks
         }
     }
 
-    public void Dead()
-    {
-        PhotonNetwork.Destroy(this.gameObject);
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (pv != null && pv.IsMine)
@@ -151,16 +146,15 @@ public class TempPlayer : MonoBehaviourPunCallbacks
 
                     audioSource.PlayOneShot(impactSound);
 
-                    tempGM.CallRpcSendMessageToAll($"{bulletPv.Owner.NickName} hit {pv.Owner.NickName}!");
+                    tempGM.photonView.RPC("RpcSendMessage", RpcTarget.All, $"{bulletPv.Owner.NickName} hit {pv.Owner.NickName}!");
 
                     if (hp <= 10 && hp > 0)
-                    {
-                        tempGM.CallRpcSendMessageToAll($"{pv.Owner.NickName} is low on health!");
-                    }
+                    tempGM.photonView.RPC("RpcSendMessage", RpcTarget.All, $"{pv.Owner.NickName} is low on health!");
                     else if (hp <= 0)
                     {
                         PhotonNetwork.Destroy(this.gameObject);
-                        Dead();
+                        tempGM.photonView.RPC("RpcSendMessage", RpcTarget.All, $"{pv.Owner.NickName} is dead!");
+                        tempGM.photonView.RPC("RpcPlayerDead", RpcTarget.All, pv.Owner);
                     }
                 }
             }

@@ -17,13 +17,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        if (!PhotonNetwork.IsConnected)
+        if (!PhotonNetwork.IsConnectedAndReady)
         {
             LoadingUI("Loading Main Menu...");
             SceneManager.LoadScene("Main Menu");
         }
         else
+        {
+            if (PhotonNetwork.InRoom)
+                PhotonNetwork.LeaveRoom();
+
             PhotonNetwork.JoinLobby();
+        }
     }
 
     public override void OnJoinedRoom()

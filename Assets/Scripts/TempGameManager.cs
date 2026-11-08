@@ -1,10 +1,12 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
-using WebSocketSharp;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using WebSocketSharp;
 
 public class TempGameManager : MonoBehaviourPunCallbacks
 {
@@ -35,6 +37,7 @@ public class TempGameManager : MonoBehaviourPunCallbacks
             pv = gameObject.GetComponent<PhotonView>();
             roomNameText.text = $"{PhotonNetwork.CurrentRoom.Name} Room";
             StartGame();
+            CheckGameOver();
         }
     }
 
@@ -42,9 +45,7 @@ public class TempGameManager : MonoBehaviourPunCallbacks
     {
         alivePlayerMap.Clear();
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
-        {
             alivePlayerMap[player] = true;
-        }
 
         float x = Random.Range(boundsMin, boundsMax);
         float z = Random.Range(boundsMin, boundsMax);
@@ -57,7 +58,17 @@ public class TempGameManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void RpcSendMessage(string message, PhotonMessageInfo info)
+    public void RpcPlayerDead(Player deadPlayer)
+    {
+        if (alivePlayerMap.ContainsKey(deadPlayer))
+            alivePlayerMap[deadPlayer] = false;
+
+        if (PhotonNetwork.IsMasterClient)
+            CheckGameOver();
+    }
+
+    [PunRPC]
+    public void RpcSendMessage(string message)
     {
         if (messageList.Count >= 8)
             messageList.RemoveAt(0);
@@ -65,20 +76,16 @@ public class TempGameManager : MonoBehaviourPunCallbacks
         UpdateMessage();
     }
 
-    public void CallRpcSendMessageToAll(string message)
+    [PunRPC]
+    public void RpcClearMessages()
     {
-        pv.RPC("RpcSendMessage", RpcTarget.All, message);
+        messageList.Clear();
     }
 
     public void UpdateMessage()
     {
         if (messageText != null)
             messageText.text = string.Join("\n", messageList);
-    }
-
-    private void CheckGameOver()
-    {
-        Debug.Log("Check Game Over does nothing");
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -89,13 +96,40 @@ public class TempGameManager : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         if (alivePlayerMap.ContainsKey(otherPlayer))
-        {
             alivePlayerMap.Remove(otherPlayer);
-        }
+
+        if (PhotonNetwork.CurrentRoom.PlayerCount <= 1)
+            PhotonNetwork.LeaveRoom();
 
         if (PhotonNetwork.IsMasterClient)
-        {
             CheckGameOver();
-        }
+    }
+
+    public override void OnLeftRoom()
+    {
+        SceneManager.LoadScene("Lobby");
+    }
+
+    public void CheckGameOver()
+    {
+        List<Player> alivePlayers = new List<Player>();
+        foreach (Player alivePlayer in alivePlayerMap.Keys)
+            if (alivePlayerMap[alivePlayer])
+                alivePlayers.Add(alivePlayer);
+
+        if (alivePlayers.Count() == 1)
+            StartCoroutine(LoadLevelForAll(alivePlayers[0].NickName, 5));
+        else if (alivePlayers.Count() < 1)
+            StartCoroutine(LoadLevelForAll("Error: No One", 5));
+    }
+
+    IEnumerator LoadLevelForAll(string lastPlayer, float delayInSeconds)
+    {
+        pv.RPC("RpcClearMessages", RpcTarget.All);
+        pv.RPC("RpcSendMessage", RpcTarget.All, $"{lastPlayer} wins!");
+
+        yield return new WaitForSeconds(delayInSeconds);
+
+        PhotonNetwork.LoadLevel("Lobby");
     }
 }
